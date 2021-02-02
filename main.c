@@ -1,56 +1,90 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include "main.h"
 
+void clearBuffer(void){
+  int c;
+  do{ c = getchar();
+  } while(c != '\n' && c != EOF);
+}
 
-void initPlayer(playDef *player) {
-  printf("Bitte Spielernamen eingeben. (%i Zeichen)\n", NAMELENGTH);
+void initPlayer(char playername[][NAMELENGTH]) {
+  printf("Bitte Spielernamen eingeben. (%i Zeichen)\n", NAMELENGTH-1);
 
   for (int i = 0; i < PLAYERCOUNT; i++ ){
     printf("Spieler %d: ", i+1);
-    scanf("%s", player[i].name);
-
-    assignStartpos(i, player);
+    scanf("%s", playername[i]);
+    clearBuffer();
+    //assignStartpos(i, player);
   }
-  printf("Danke für die Eingabe, das Spiel beginnt!"); // Trommelwirbel
+  //printf("Danke für die Eingabe, das Spiel beginnt!\n\n"); // Trommelwirbel
 
 }
 
-void assignStartPos(int playerNumber, playDef *player) {
-  player[playerNumber].startPos = FIELDCOUNT / playerNumber * (playerNumber+1);
-}
+void PlayerAge(int playerage[]) {
+  printf("Bitte Spieleralter eingeben.\n");
 
-
-void move(int *dice, int *figure) {
-  payer[playerNumber]->pos[*figure] += *dice;
-}
-
-// returns 0 (true) if answer to question is yes
-int decide(char* question) {
-  char decision = 'n';
-
-  printf("%s (j/n) ", question);
-  scanf("%c", &decision);
-
-  while( decision != 'j' && decision != 'n' ) {
-    printf("Es wurde weder 'j', noch 'n' eingegeben, bitte erneut eingeben. (j/n) ");
-    scanf("%c", &decision);
+  for (int i = 0; i < PLAYERCOUNT; i++ ){
+    printf("Spieler %d: ", i+1);
+    scanf("%i", &playerage[i]);
+    clearBuffer();
+    //assignStartpos(i, player);
   }
-  else if(decision == 'j') { return 0; }
-  else { return decide(question); }
+  printf("Danke für die Eingabe, das Spiel beginnt!\n\n"); // Trommelwirbel
 
-  // This doesn't happen - but in case it does.
-  printf("\nFehler bei decide()!!!\ndecision = '%c'", decision);
-  exit(1);
+}
+
+int begin(int playerage[]) {
+  if(playerage[0] <= playerage[1]) return 0;
+  else return 1;
+}
+
+void initPos(int startpos[][PLAYERFIGURES]) {
+  for (int i = 0; i < PLAYERCOUNT; i++) {
+    for (int k = 0; k < PLAYERFIGURES; k++) {
+      startpos[i][k] = i* FIELDCOUNT / PLAYERCOUNT;
+    }
+  }
+}
+
+int dice(void){ // spuckt Würfelwert aus
+  int wert = rand()%6+1;
+  return wert;
+}
+
+int firstThrow(void){
+  int wurf = dice();
+  printf("Es wurde eine %i gewürfelt!\n", wurf);
+
+  for(int i = 0; i < 3; i++) {
+    if(wurf == 6) return 1;
+  }
+  return 0;
 }
 
 
 int main(void) {
-  playDef player[PLAYERCOUNT];
+  char playername[PLAYERCOUNT][NAMELENGTH] = {"\0"};
+  int  playerage[PLAYERCOUNT];
+  int  startpos[PLAYERCOUNT][PLAYERFIGURES];
+  int  currentPlayer = 0;
+  srand(time(NULL));
 
-  int currentPlayer;
-  int fieldCount; // What is possible? How much do we want? What is default for the game? min/max
+  initPlayer(playername);
+  PlayerAge(playerage);
 
-  initPlayer(player);
+  currentPlayer = begin(playerage);
+  printf("Spieler %s beginnt!\n", playername[currentPlayer]);
+  initPos(startpos);
 
+
+  firstThrow();
+
+
+/*
+  for (int i = 0; i < PLAYERCOUNT; i++ ){
+    printf("Spieleralter: %i\n", playerage[i]);
+  }
+*/
 }

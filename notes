@@ -1,0 +1,19 @@
+
+// returns 0 (true) if answer to question is yes
+int decide(char* question) {
+  char decision = 'n';
+
+  printf("%s (j/n) ", question);
+  scanf("%c", &decision);
+
+  while( decision != 'j' && decision != 'n' ) {
+    printf("Es wurde weder 'j', noch 'n' eingegeben, bitte erneut eingeben. (j/n) ");
+    scanf("%c", &decision);
+  }
+  else if(decision == 'j') { return 0; }
+  else { return decide(question); }
+
+  // This doesn't happen - but in case it does.
+  printf("\nFehler bei decide()!!!\ndecision = '%c'", decision);
+  exit(1);
+}
